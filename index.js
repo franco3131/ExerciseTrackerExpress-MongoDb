@@ -83,8 +83,10 @@ async function addExerciseToDbAndReturnResponse(id,duration,description,date,res
   {
       exercisesData.findOne({'id':id}).exec(async function(err,data)
       {      
-         data.description.push({description:description,duration:parseInt(duration),date: new 
-         Date(date).toDateString()});
+         data.description.push({description:description,
+                                duration:parseInt(duration),
+                                date: new Date(date).toDateString()});
+        
          data.save(async function(err){
              console.log(data);
           });
@@ -117,9 +119,9 @@ app.post('/api/users/:_id/exercises', async function(req, res) {
   let description=req.body.description;
   let date=req.body.date;
   let id=req.params._id;
-  if(date===undefined){
+  if((date===undefined)||date===''){
     date=new Date();
-  }
+  } 
   addExerciseToDbAndReturnResponse(id,duration,description,date,res);
 
 });
@@ -137,8 +139,8 @@ app.get('/api/users/:_id/logs/:from?/:to?/:limit?', async function(req, res) {
       foundExerciseData=foundExerciseData[0]['description'];
       let startDate = new Date(from);
       let endDate = new Date(to);
-      let resultProductData = foundExerciseData.filter(a => {
-      let date = new Date(a.date);
+      let resultProductData = foundExerciseData.filter(data => {
+      let date = new Date(data.date);
       return (date >= startDate && date <= endDate);
   });
   logData=resultProductData;
